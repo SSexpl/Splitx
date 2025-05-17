@@ -1,5 +1,6 @@
 package split.controller.Public.Login;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,6 +46,12 @@ public class LoginController {
     @Autowired
     private WebClient webClient;
 
+    @Value("${clientId}")
+    private String clientId;
+
+    @Value("${clientSecret}")
+    private String clientSecret;
+
     @PostMapping("/emailAndPassword")
     public String authenticate(@RequestBody AuthenticationRequestDTO request) throws Exception {
         try {
@@ -63,13 +70,12 @@ public class LoginController {
     @PostMapping("/gmail")
     public ResponseEntity<?> handleGoogleCallback(@RequestParam String code) {
         try {
-            String clientId="615961089023-rphbhimb4hcjjsi10rr11qm7bm4v8t1q.apps.googleusercontent.com";
-            String clientSecret="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";
+
             String tokenEndpoint = "https://oauth2.googleapis.com/token";
             HashMap<String, String> params = new HashMap<>();
             params.put("code", code);
-            params.put("client_id", clientId);
-            params.put("client_secret", clientSecret);
+            params.put("client_id",clientId);
+            params.put("client_secret",clientSecret);
             params.put("redirect_uri", "https://developers.google.com/oauthplayground");
             params.put("grant_type", "authorization_code");
             ResponseEntity<Map> tokenResponse = webClient.post()
